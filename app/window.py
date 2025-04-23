@@ -1,4 +1,6 @@
 from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtGui
+
 from personality.characters import *
 from person import Person
 
@@ -8,6 +10,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1200, 900)
+        MainWindow.setWindowIcon(QtGui.QIcon('C:/div/Projects/Python/math_project/app/icon.png'))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
@@ -224,6 +227,7 @@ class Ui_MainWindow(object):
         self.doubleSpinBox_11.setMinimum(0)
         self.doubleSpinBox_15.setMaximum(float('inf'))
         self.doubleSpinBox_15.setMinimum(0)
+
 
 
     def push(self):
