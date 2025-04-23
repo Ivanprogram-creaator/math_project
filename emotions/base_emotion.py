@@ -7,7 +7,7 @@ class BaseEmotion:
         self.shade = None
 
     def count_emotion_shade(self, emotion_value: float) -> None:
-        shade_key = min(self.shades.keys(), key=lambda x: emotion_value - x if emotion_value - x >= 0 else 10000000)
+        shade_key = min(self.shades.keys(), key=lambda x: abs(emotion_value) - x if abs(emotion_value) - x >= 0 else 10000000)
         self.shade = self.shades[shade_key]
 
     def __repr__(self):

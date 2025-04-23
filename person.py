@@ -1,15 +1,33 @@
 import numpy
-
-import config
+import numpy as np
+import ydf
+import pandas as pd
 from emotions import types
 from emotions.base_emotion import BaseEmotion
 from personality.base_character import BaseCharacter
-from personality.characters import ENTJ
 
 
 class Person:
+    IDs = {
+        5: "1",
+        3: "2",
+        2: "3",
+        1: "4",
+        0: "5",
+        4: "6"
+    }
+    IDs_rev = {
+        "1": 5,
+        "2": 3,
+        "3": 2,
+        "4": 1,
+        "5": 0,
+        "6": 4
+    }
+
     def __init__(self, character: BaseCharacter):
         self.character: BaseCharacter = character
+        self.model = ydf.load_model("model")
 
     def emotion_define(self, relationship=None, **kwargs) -> BaseEmotion:
         direction = kwargs["direction"]
@@ -20,32 +38,31 @@ class Person:
             own_probability=kwargs["own_probability"],
             surprise_coef=kwargs["surprise_coef"]
         )
-        emotion_type = self._get_emotion_type(emotion_strength, kwargs["needs_percent"], direction, relationship)
+        emotion_type = self._get_emotion_type(kwargs["needs_percent"], direction, relationship)
         emotions: BaseEmotion = types[emotion_type][(emotion_indication, direction, timeline)]
-        emotions.count_emotion_shade(emotion_strength)
+        emotions.count_emotion_shade(emotion_value=emotion_strength)
         return emotions
 
     def _get_emotion_type(
             self,
-            emotion_strength: float,
             needs_percent: list[float],
             direction: bool,
             relationship: int
     ) -> str:
-        data = config.EMOTIONS_TYPES_PERCENT
+        df = pd.DataFrame(columns=["0", "1", "2", "3", "4", "5", "6"])
+        df.loc[0] = needs_percent
+        prediction = list(self.model.predict(df))[0]
         if direction or not relationship:
-            del data["2"]
-            del data["4"]
-            del data["5"]
-            del data["6"]
+            prediction[self.IDs_rev["2"]] = -1
+            prediction[self.IDs_rev["4"]] = -1
+            prediction[self.IDs_rev["5"]] = -1
+            prediction[self.IDs_rev["6"]] = -1
         if relationship == 1:
-            del data["6"]
+            prediction[self.IDs_rev["6"]] = -1
         elif relationship == -1:
-            del data["4"]
-            del data["5"]
-        for key, val in data.items():
-            data[key] = (numpy.array(needs_percent) * numpy.array(val) * emotion_strength).sum()
-        ans = max(data, key=data.get)
+            prediction[self.IDs_rev["4"]] = -1
+            prediction[self.IDs_rev["5"]] = -1
+        ans = self.IDs[int(np.argmax(prediction))]
         return ans
 
     def _emotion_strength_and_indication(

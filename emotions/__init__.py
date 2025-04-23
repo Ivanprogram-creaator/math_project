@@ -17,7 +17,7 @@ types = {
         (1, True, True): SelfEsteem(),
         (-1, True, False): Irresponsibility(),
         (1, True, False): Responsibility(),
-        (-1, False, True): Contempt,
+        (-1, False, True): Contempt(),
         (1, False, True): Respect(),
         (-1, False, False): Antipathy(),
         (1, False, False): Sympathy(),

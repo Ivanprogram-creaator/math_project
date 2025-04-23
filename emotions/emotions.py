@@ -1,7 +1,7 @@
 from emotions.base_emotion import BaseEmotion
 MOOD = 0
-EMOTION = 100
-AFFECT = 1000
+EMOTION = 2.8
+AFFECT = 10
 
 class Interest(BaseEmotion):
     def __init__(self):
